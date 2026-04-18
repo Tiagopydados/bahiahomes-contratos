@@ -79,6 +79,13 @@ st.markdown("""
 header[data-testid="stHeader"] { display: none; }
 #MainMenu { visibility: hidden; }
 footer { visibility: hidden; }
+[data-testid="stDecoration"] { display: none; }
+.stDeployButton { display: none; }
+button[kind="userAvatar"] { display: none !important; }
+[data-testid="userAvatar"] { display: none !important; }
+iframe[title="streamlit_cloud_user_info"] { display: none !important; }
+div[class*="ProfileButton"] { display: none !important; }
+div[class*="userAvatar"] { display: none !important; }
 </style>
 """, unsafe_allow_html=True)
 
