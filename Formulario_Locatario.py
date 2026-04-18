@@ -73,7 +73,19 @@ st.set_page_config(
     layout="centered",
 )
 
-st.title("🏠 Bahia Homes")
+st.markdown("""
+<style>
+[data-testid="stAppViewBlockContainer"] img[alt="user avatar"] { display: none; }
+header[data-testid="stHeader"] { display: none; }
+#MainMenu { visibility: hidden; }
+footer { visibility: hidden; }
+</style>
+""", unsafe_allow_html=True)
+
+st.image(
+    "https://raw.githubusercontent.com/Tiagopydados/bahiahomes-contratos/main/Arquivos_necessarios/Logo_BH_vetorizada.png",
+    width=250,
+)
 st.subheader("Formulário de dados do hóspede")
 st.caption("Preencha seus dados abaixo. Ao finalizar, clique em **Enviar** — seus dados chegarão diretamente para a nossa equipe.")
 
