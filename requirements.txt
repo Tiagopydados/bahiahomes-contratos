@@ -1,0 +1,6 @@
+streamlit
+docxtpl
+num2words
+deep-translator
+python-docx
+lxml
