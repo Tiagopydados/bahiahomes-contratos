@@ -35,24 +35,12 @@ def enviar_email(dados: dict):
   <tr><td style="padding:6px;font-weight:bold;">Telefone / WhatsApp</td><td style="padding:6px;">{dados.get('telefone_locatario','')}</td></tr>
 </table>
 
-<h3 style="margin-top:24px;">Composição do grupo</h3>
-<table style="border-collapse:collapse;width:100%;">
-  <tr><td style="padding:6px;font-weight:bold;width:200px;">Casais</td><td style="padding:6px;">{dados.get('casais',0)}</td></tr>
-  <tr style="background:#f5f5f5;"><td style="padding:6px;font-weight:bold;">Solteiros</td><td style="padding:6px;">{dados.get('solteiros',0)}</td></tr>
-  <tr><td style="padding:6px;font-weight:bold;">Crianças</td><td style="padding:6px;">{dados.get('criancas',0)}</td></tr>
-  <tr style="background:#f5f5f5;"><td style="padding:6px;font-weight:bold;">Babá(s)</td><td style="padding:6px;">{dados.get('baba',0)}</td></tr>
-  <tr><td style="padding:6px;font-weight:bold;">Total de pessoas</td><td style="padding:6px;font-weight:bold;color:#457354;">{dados.get('quantidade_pessoas',0)}</td></tr>
-</table>
-
-{"<h3 style='margin-top:24px;'>Observações</h3><p>" + dados.get('observacoes','') + "</p>" if dados.get('observacoes') else ""}
-
 <p style="margin-top:32px;color:#888;font-size:12px;">Enviado automaticamente pelo Formulário do Locatário – Bahia Homes</p>
 </body></html>
 """
 
     msg.attach(MIMEText(corpo, "html"))
 
-    # Anexar o .json
     json_bytes = json.dumps(dados, ensure_ascii=False, indent=2).encode("utf-8")
     nome_arquivo = f"dados_{dados.get('nome_locatario_pf','locatario').split()[0].lower()}.json"
     anexo = MIMEBase("application", "octet-stream")
@@ -108,7 +96,7 @@ tipo_doc = st.selectbox(
 
 col1, col2 = st.columns(2)
 with col1:
-    nome        = st.text_input("Nome completo *", key="nome")
+    nome          = st.text_input("Nome completo *", key="nome")
     nacionalidade = st.text_input("Nacionalidade *", key="nacionalidade")
     estado_civil  = st.selectbox(
         "Estado civil *",
@@ -119,8 +107,8 @@ with col1:
 
 with col2:
     if tipo_doc == "CPF (brasileiro)":
-        cpf       = st.text_input("CPF *", placeholder="000.000.000-00", key="cpf")
-        rg        = st.text_input("RG *", key="rg")
+        cpf        = st.text_input("CPF *", placeholder="000.000.000-00", key="cpf")
+        rg         = st.text_input("RG *", key="rg")
         passaporte = ""
     else:
         passaporte = st.text_input("Número do passaporte *", key="passaporte")
@@ -131,33 +119,6 @@ with col2:
     telefone = st.text_input("Telefone / WhatsApp *", placeholder="+55 11 99999-9999", key="telefone")
 
 endereco = st.text_area("Endereço completo *", placeholder="Rua, número, cidade, estado, país, CEP", height=80, key="endereco")
-
-st.divider()
-
-st.subheader("Composição do grupo")
-st.caption("Informe quantas pessoas de cada categoria virão na hospedagem.")
-
-c1, c2, c3, c4 = st.columns(4)
-with c1:
-    casais    = st.number_input("Casais",    min_value=0, step=1, key="casais")
-with c2:
-    solteiros = st.number_input("Solteiros", min_value=0, step=1, key="solteiros")
-with c3:
-    criancas  = st.number_input("Crianças",  min_value=0, step=1, key="criancas")
-with c4:
-    baba      = st.number_input("Babá(s)",   min_value=0, step=1, key="baba")
-
-total_pessoas = int(casais) * 2 + int(solteiros) + int(criancas) + int(baba)
-if total_pessoas > 0:
-    st.info(f"Total de pessoas: **{total_pessoas}**")
-
-st.divider()
-
-observacoes = st.text_area(
-    "Observações ou necessidades especiais (opcional)",
-    height=80,
-    key="observacoes",
-)
 
 st.divider()
 
@@ -184,16 +145,17 @@ if st.button("Enviar dados para a Bahia Homes", use_container_width=True, type="
             "endereco_locatario_pf": endereco.strip(),
             "email_locatario": email.strip(),
             "telefone_locatario": telefone.strip(),
-            "casais": int(casais),
-            "solteiros": int(solteiros),
-            "criancas": int(criancas),
-            "baba": int(baba),
-            "quantidade_pessoas": total_pessoas,
-            "composicao_grupo": (
-                f"{int(casais)} casal(is), {int(solteiros)} solteiro(s), "
-                f"{int(criancas)} criança(s), {int(baba)} babá(s)"
-            ),
-            "observacoes": observacoes.strip(),
+            # Campos para compatibilidade com app principal
+            "nome_empresa_locatario": "",
+            "cnpj_empresa_locatario": "",
+            "endereco_empresa_locatario": "",
+            "nome_representante_locatario": "",
+            "nacionalidade_representante_locatario": "",
+            "estado_civil_representante_locatario": "",
+            "profissao_representante_locatario": "",
+            "cpf_representante_locatario": "",
+            "rg_representante_locatario": "",
+            "endereco_representante_locatario": "",
         }
 
         try:
@@ -203,7 +165,6 @@ if st.button("Enviar dados para a Bahia Homes", use_container_width=True, type="
         except Exception as e:
             st.error(f"Erro ao enviar. Tente novamente ou entre em contato pelo WhatsApp. (Detalhe: {e})")
 
-        # Download do json como backup
         json_bytes = json.dumps(dados, ensure_ascii=False, indent=2).encode("utf-8")
         st.download_button(
             label="⬇️ Baixar cópia dos seus dados (.json)",
